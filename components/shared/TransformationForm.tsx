@@ -13,27 +13,22 @@ import {
 } from "@/components/ui/select"
 
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+import {Form} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { aspectRatioOptions, creditFee, defaultValues, transformationTypes } from "@/constants"
-import { CustomField } from "./CustomField"
-import { useEffect, useState, useTransition } from "react"
 import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils"
+import { useEffect, useState, useTransition } from "react"
+import { CustomField } from "./CustomField"
 // import MediaUploader from "./MediaUploader"
 // import TransformedImage from "./TransformedImage"
+import { addImage, updateImage } from "@/lib/actions/image.actions"
 import { updateCredits } from "@/lib/actions/user.actions"
 import { getCldImageUrl } from "next-cloudinary"
-// import { addImage, updateImage } from "@/lib/actions/image.actions"
 import { useRouter } from "next/navigation"
-import { InsufficientCreditsModal } from "./InsufficientCreditsModal";
+import { InsufficientCreditsModal } from "./InsufficientCreditsModal"
+import MediaUploader from "./MediaUploader"
+import TransformedImage from "./TransformedImage"
+
 
 export const formSchema = z.object({
   title: z.string(),
@@ -93,42 +88,42 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance, 
         color: values.color,
       }
 
-    //   if(action === 'Add') {
-    //     try {
-    //       const newImage = await addImage({
-    //         image: imageData,
-    //         userId,
-    //         path: '/'
-    //       })
+      if(action === 'Add') {
+        try {
+          const newImage = await addImage({
+            image: imageData,
+            userId,
+            path: '/'
+          })
 
-    //       if(newImage) {
-    //         form.reset()
-    //         setImage(data)
-    //         router.push(`/transformations/${newImage._id}`)
-    //       }
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-    //   }
+          if(newImage) {
+            form.reset()
+            setImage(data)
+            router.push(`/transformations/${newImage._id}`)
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
 
-    //   if(action === 'Update') {
-    //     try {
-    //       const updatedImage = await updateImage({
-    //         image: {
-    //           ...imageData,
-    //           _id: data._id
-    //         },
-    //         userId,
-    //         path: `/transformations/${data._id}`
-    //       })
+      if(action === 'Update') {
+        try {
+          const updatedImage = await updateImage({
+            image: {
+              ...imageData,
+              _id: data._id
+            },
+            userId,
+            path: `/transformations/${data._id}`
+          })
 
-    //       if(updatedImage) {
-    //         router.push(`/transformations/${updatedImage._id}`)
-    //       }
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-    //   }
+          if(updatedImage) {
+            router.push(`/transformations/${updatedImage._id}`)
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
     }
 
     setIsSubmitting(false)
@@ -174,7 +169,7 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance, 
     setNewTransformation(null)
 
     startTransition(async () => {
-    //   await updateCredits(userId, creditFee)
+      await updateCredits(userId, creditFee)
     })
   }
 
@@ -268,7 +263,7 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance, 
           </div>
         )}
 
-        {/* <div className="media-uploader-field">
+        <div className="media-uploader-field">
           <CustomField 
             control={form.control}
             name="publicId"
@@ -292,7 +287,7 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance, 
             setIsTransforming={setIsTransforming}
             transformationConfig={transformationConfig}
           />
-        </div> */}
+        </div>
 
         <div className="flex flex-col gap-4">
           <Button 
