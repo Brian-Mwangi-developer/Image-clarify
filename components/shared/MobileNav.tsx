@@ -23,7 +23,7 @@ const MobileNav = () => {
                     <UserButton afterSignOutUrl="/" />
                     <Sheet>
                         <SheetTrigger>
-                            <Image src="assets/icons/menu.svg"
+                            <Image src="/assets/icons/menu.svg"
                                 alt="menu"
                                 width={32}
                                 height={32}
